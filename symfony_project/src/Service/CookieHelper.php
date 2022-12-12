@@ -21,11 +21,12 @@ class CookieHelper
     public function createMercureCookie(User $user): string
     {
         $jwt = $this->JWTHelper->createJWT($user);
-
+        $date = new \DateTime("1 day");
+        
         return Cookie::create(
             'mercureAuthorization',
             $jwt,
-            new \DateTime("10 minutes"),
+            $date,
             '/.well-known/mercure',
             'localhost',
             true,

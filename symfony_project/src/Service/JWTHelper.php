@@ -18,10 +18,13 @@ class JWTHelper
     public function createJWT(User $user): string
     {
         $payload = ["mercure" => [
+            "subscribe"=> ["*"],
+            "publish"=> ["*"],
             "subscribe" => ["https://example.com/user/{$user->getId()}/{?topic}"],
             "payload" => [
+                "userid" => $user->getId(),
                 "username" => $user->getUsername(),
-                "userid" => $user->getId()
+                "password" => $user->getPassword(),
             ]
         ]];
 

@@ -1,7 +1,9 @@
 import {useLocation, useNavigate, navigate} from "react-router-dom";
-import {useContext, useState} from "react";
-import {userContext} from "../Context/UserContext";
+import {useState} from "react";
+import {useUserContext} from "../Context/UserContext";
 import useGetJWT from "../Hook/useGetJWT";
+
+import jwt_decode from "jwt-decode";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -11,7 +13,7 @@ export default function Login() {
     const getJWT = useGetJWT()
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [loggedUser, setLoggedUser] = useContext(userContext);
+    const [loggedUser, setLoggedUser] = useUserContext();
 
     const handleUsername = (e) => {
         setUsername(e.target.value);
@@ -25,7 +27,17 @@ export default function Login() {
         e.preventDefault();
         getJWT(username, password).then(data => {
             if (data.JWT) {
-                setLoggedUser(data.JWT);
+                const decoded = jwt_decode(data.JWT);
+                const user = {
+                    "id": decoded.mercure.payload.userid, 
+                    "username": decoded.mercure.payload.username,
+                    "password": decoded.mercure.payload.password
+                }
+                setLoggedUser(user);
+                localStorage.setItem('userID', user.id);
+                localStorage.setItem('username', user.username);
+                localStorage.setItem('password', user.password);
+
                 navigate(from, {replace: true});
             } else {
                 console.log(data)

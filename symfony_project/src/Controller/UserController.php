@@ -11,8 +11,11 @@ class UserController extends AbstractController
     #[Route('/user-list', name: 'user_list')]
     public function userList(UserRepository $userRepository)
     {
+        $users = $userRepository->findAll();
+        //$users = $userRepository->findAllButMe($this->getUser());
+
         return $this->json([
-            'users' => $userRepository->findAll()
+            'users' => $users
         ], 200, [], ['groups' => 'main']);
     }
 }
